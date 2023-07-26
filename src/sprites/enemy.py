@@ -15,6 +15,7 @@ class Enemy(pygame.sprite.Sprite):
         self.image.fill("blue")
         self.rect = self.image.get_rect(center=(x, y))
         self.speed = random.randint(5, 10)
+        self._hp = 100
 
     def _move(self):
         self.rect.move_ip(0, 1 )
@@ -23,6 +24,14 @@ class Enemy(pygame.sprite.Sprite):
         if self.rect.y > HEIGHT - 80:
             self.rect.y = HEIGHT - 120
 
+    def _check_hp(self):
+        if self._hp <= 0:
+            self.kill()
+
+    def get_damage(self, damage):
+        self._hp -= damage
+
     def update(self):
         self._move()
         self._outside_screen()
+        self._check_hp()
