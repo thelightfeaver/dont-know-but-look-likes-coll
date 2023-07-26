@@ -1,5 +1,8 @@
 """This module contains the player class."""
 
+
+import time
+
 import pygame
 
 class Player(pygame.sprite.Sprite):
@@ -15,19 +18,17 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = (x, y)
 
         # Set speed
-        self.speed = 5
+        self.speed = 10
         
         # bullet cooldown
-        self.bulllet_cooldown = 100
+        self.bulllet_cooldown = time.time()
         self.ready_to_shoot = True
 
 
-    def _recharge(self):
-        if not self.ready_to_shoot:
-            self.bulllet_cooldown -= 1
-            if self.bulllet_cooldown <= 0:
-                self.ready_to_shoot = True
-                self.bulllet_cooldown = 100
+    def _recharge_shoot(self):
+        if time.time() - self.bulllet_cooldown > 0.1:
+            self.bulllet_cooldown = time.time()
+            self.ready_to_shoot = True
 
     def _move(self):
 
@@ -39,4 +40,4 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self._move()
-        self._recharge()
+        self._recharge_shoot()
