@@ -1,4 +1,4 @@
-import random
+import random, time
 
 import pygame
 
@@ -8,25 +8,36 @@ from sprites.bullet import Bullet
 from sprites.enemy import Enemy
 from config.config import *
 
+
 class MainLevel:
 
     def __init__(self):
+        
         self.surface = pygame.display.get_surface()
         self.player = pygame.sprite.GroupSingle(Player(WIDTH // 2, HEIGHT -20 ))
         self.blocks = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
 
+        # lol
+        self.generation_enemy_time = time.time()
+        self.pause = False
+        self.limit_wave = len(WAVES) 
+        self.index_wave = 0
+
+        # Load Map
         self.create_maps()
-        self._generation_enemy()
 
     def create_maps(self):
         self.blocks.add(Block(0, HEIGHT - 50, WIDTH, 10))
 
     def update(self):
-        self._draw()
-        self._handle_events()
-        self._check_collisions()
+
+        if not self.pause:
+            self._draw()
+            self._handle_events()
+            self._check_collisions()
+            self._generation_enemy()
 
     def _draw(self):
         self.player.draw(self.surface)
@@ -39,7 +50,16 @@ class MainLevel:
         self.enemies.update()
 
     def _generation_enemy(self):
-        self.enemies.add(Enemy(random.randint(50, 250), 10))
+        print(f"Time: {time.time() - self.generation_enemy_time}")
+        print(f"Index: {self.index_wave}")
+
+        if self.index_wave < self.limit_wave:
+           
+            if time.time() - self.generation_enemy_time > int(WAVES[self.index_wave]["time"]):
+                for _ in range(WAVES[self.index_wave]["enemies"]):
+                    self.generation_enemy_time = time.time()
+                    self.enemies.add(Enemy(random.randint(50, WIDTH - 50), 10))
+                self.index_wave += 1
 
     def _check_collisions(self):
         # collision between enemy and bullets

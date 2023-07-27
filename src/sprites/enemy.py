@@ -14,11 +14,11 @@ class Enemy(pygame.sprite.Sprite):
         self.image = pygame.Surface((30, 30))
         self.image.fill("blue")
         self.rect = self.image.get_rect(center=(x, y))
-        self.speed = random.randint(5, 10)
+        self.speed = random.randint(3, 15)
         self._hp = 100
 
     def _move(self):
-        self.rect.move_ip(0, 1 )
+        self.rect.move_ip(0, 0.1 * self.speed)
 
     def _outside_screen(self):
         if self.rect.y > HEIGHT - 80:
